@@ -1,0 +1,3 @@
+# Ecommerce evisu
+
+Ce projet a été réalisé dans le cadre d'un BUT MMI (en 2ème) année. L'objectif était de réaliser un site de type click and collect en se basant sur une enseigne existante. J'ai personnellement décidé de choisir la marque japonaise evisu qui est une marque nottement pour la ventre d'arcticle en denim. Ce projet m'as initié à la gestion d'une API REST et la configuration d'un Router web. Concernant les stacks, le projet  été réalisé en HTML et JavaScript avec Tailwind pour le front (dossier /client) et PHP pour le back (dossier /api). Ce projet a été réalisé sur deux semaines. La première semaine a surtout concernée le maquettage de l'application en mettant l'accent sur la fluidité du parcours utilisateur et la responsivité
