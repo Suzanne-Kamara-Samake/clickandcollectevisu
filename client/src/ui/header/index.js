@@ -10,9 +10,9 @@ let html = NavView.html();
 // en donnant la possibilité de l'avoir sous forme html ou bien de dom
 let HeaderView = {
   html: function () {
-    template = template.replace("{{nav}}", html);
-    console.log(template);
-    return template;
+    const headerTemplate = template.replace("{{nav}}", html);
+    console.log(headerTemplate);
+    return headerTemplate;
   },
 
   dom: function () {
