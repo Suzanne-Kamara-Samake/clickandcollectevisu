@@ -15,3 +15,7 @@ node_modules/
 *.pfx
 *.jks
 *.keystore
+
+
+client/dist/
+api/.env.example

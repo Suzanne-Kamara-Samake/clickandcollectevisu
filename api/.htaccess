@@ -1,10 +1,14 @@
-# CORS headers (placed in IfModule to avoid errors if mod_headers is not enabled)
+<IfModule mod_setenvif.c>
+  SetEnvIf Origin "^https://clickandcollectevisu\.vercel\.app$" CORS_ORIGIN=$0
+  SetEnvIf Origin "^http://localhost:5173$" CORS_ORIGIN=$0
+</IfModule>
+
 <IfModule mod_headers.c>
-  # Allow requests from any origin (change in production)
-  Header set Access-Control-Allow-Origin "http://localhost:5173"
-  Header set Access-Control-Allow-Methods "GET,POST,DELETE,PATCH,OPTIONS"
-  Header set Access-Control-Allow-Headers "Content-Type,Authorization"
-  Header set Access-Control-Allow-Credentials "true"
+  Header always set Access-Control-Allow-Origin "%{CORS_ORIGIN}e" env=CORS_ORIGIN
+  Header always set Access-Control-Allow-Methods "GET, POST, DELETE, PATCH, OPTIONS"
+  Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+  Header always set Access-Control-Allow-Credentials "true" env=CORS_ORIGIN
+  Header always merge Vary "Origin"
 </IfModule>
 
 <IfModule mod_rewrite.c>

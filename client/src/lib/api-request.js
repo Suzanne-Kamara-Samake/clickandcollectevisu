@@ -4,8 +4,8 @@
  */
 
 
-// let API_URL = "https://mmi.unilim.fr/~kamara4/api/";
-let API_URL = "/api/";
+// api-request.js
+const API_URL = import.meta.env.VITE_API_URL || "/api/";
 
 /**
  *  getRequest

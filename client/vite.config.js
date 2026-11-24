@@ -7,8 +7,11 @@ export default defineConfig({
   },
   plugins: [tailwindcss()],
   server: {
-    proxy: {
-      "/api": "http://localhost:8000"
+        proxy: {
+      "/api": {
+        target: "https://clickandcollectevisu.onrender.com",
+        changeOrigin: true
+      }
     }
   },
   base: "/",
