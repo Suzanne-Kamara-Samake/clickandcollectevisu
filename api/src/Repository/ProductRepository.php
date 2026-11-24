@@ -30,7 +30,7 @@ class ProductRepository extends EntityRepository {
             permet de vérifier que la valeur transmise est "safe" et de se prémunir
             d'injection SQL.
         */
-        $requete = $this->cnx->prepare("select * from Product where id=:value"); // prepare la requête SQL
+        $requete = $this->cnx->prepare('SELECT * FROM "Product" WHERE id=:value'); // prepare la requête SQL
 
         $requete->bindParam(':value', $id); // fait le lien entre le "tag" :value et la valeur de $id
         $requete->execute(); // execute la requête
@@ -47,7 +47,7 @@ class ProductRepository extends EntityRepository {
         $p->setPrix($answer->prix);
         $p->setDescription($answer->description);
 
-        $requete=$this->cnx->prepare("SELECT * FROM ProductGallery WHERE idProd=:value");
+        $requete=$this->cnx->prepare('SELECT * FROM "ProductGallery" WHERE "idProd"=:value');
         $requete->bindParam(':value', $id);
         $requete->execute();
         $answer = $requete->fetch(PDO::FETCH_OBJ);
@@ -61,7 +61,7 @@ class ProductRepository extends EntityRepository {
     }
 
     public function findAll(): array {
-        $requete = $this->cnx->prepare("select * from Product");
+        $requete = $this->cnx->prepare('SELECT * FROM "Product"');
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
 
@@ -77,7 +77,7 @@ class ProductRepository extends EntityRepository {
             $p->setDescription($obj->description);
             
             // Récupérer les images de la galerie pour ce produit
-            $galleryRequest = $this->cnx->prepare("SELECT * FROM ProductGallery WHERE idProd=:value");
+            $galleryRequest = $this->cnx->prepare('SELECT * FROM "ProductGallery" WHERE "idProd"=:value');
             $productId = $obj->id;
             $galleryRequest->bindParam(':value', $productId);
             $galleryRequest->execute();
@@ -94,7 +94,7 @@ class ProductRepository extends EntityRepository {
     }
 
     public function findAllByCategory($categoryId): array {
-        $requete = $this->cnx->prepare("select * from Product where category=:value");
+        $requete = $this->cnx->prepare('SELECT * FROM "Product" WHERE category=:value');
         $requete->bindParam(':value', $categoryId);
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
@@ -121,27 +121,21 @@ class ProductRepository extends EntityRepository {
      * @return array Un tableau associatif avec le nombre de produits par catégorie
      */
     public function countByCategory(): array {
-        $requete = $this->cnx->prepare("SELECT category, COUNT(*) as count FROM Product GROUP BY category");
+        $requete = $this->cnx->prepare('SELECT category, COUNT(*) AS count FROM "Product" GROUP BY category');
         $requete->execute();
         return $requete->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function save($product){
-        $requete = $this->cnx->prepare("insert into Product (name, category) values (:name, :idcategory)");
+        $requete = $this->cnx->prepare('INSERT INTO "Product" (name, category) VALUES (:name, :idcategory) RETURNING id');
         $name = $product->getName();
         $idcat = $product->getIdcategory();
         $requete->bindParam(':name', $name );
         $requete->bindParam(':idcategory', $idcat);
         
-        $answer = $requete->execute(); // an insert query returns true or false. $answer is a boolean.
-
-        if ($answer){
-            $id = $this->cnx->lastInsertId(); // retrieve the id of the last insert query
-            $product->setId($id); // set the product id to its real value.
-            return true;
-        }
-          
-        return false;
+        $requete->execute();
+        $product->setId((int) $requete->fetchColumn());
+        return true;
     }
 
     public function delete($id){

@@ -24,7 +24,7 @@ class UserRepository extends EntityRepository {
         // TODO: Implémenter la requête SQL
         // Exemple :
         
-        $requete = $this->cnx->prepare("SELECT * FROM User WHERE id=:value");
+        $requete = $this->cnx->prepare('SELECT * FROM "User" WHERE id=:value');
         $requete->bindParam(':value', $id);
         $requete->execute();
         $answer = $requete->fetch(PDO::FETCH_OBJ);
@@ -43,7 +43,7 @@ class UserRepository extends EntityRepository {
     }
 
     public function findUserByEmail($email): ?User {
-        $requete = $this->cnx->prepare("SELECT * FROM User WHERE email=:email");
+        $requete = $this->cnx->prepare('SELECT * FROM "User" WHERE email=:email');
         $requete->bindParam(':email', $email);
         $requete->execute();
         $answer = $requete->fetch(PDO::FETCH_OBJ);
@@ -89,7 +89,7 @@ class UserRepository extends EntityRepository {
             }
 
             // Vérifie les credentials dans la base de données
-            $requete = $this->cnx->prepare("SELECT * FROM User WHERE email = :email LIMIT 1");
+            $requete = $this->cnx->prepare('SELECT * FROM "User" WHERE email = :email LIMIT 1');
             $requete->bindParam(':email', $email);
             $requete->execute();
             $user = $requete->fetch(PDO::FETCH_OBJ);
@@ -266,7 +266,7 @@ class UserRepository extends EntityRepository {
 
             // Vérifier l'unicité du nouvel email si différent de l'email actuel
             if ($email !== $user->getEmail()) {
-                $checkEmail = $this->cnx->prepare("SELECT id FROM User WHERE email = :email AND id != :id");
+                $checkEmail = $this->cnx->prepare('SELECT id FROM "User" WHERE email = :email AND id != :id');
                 $checkEmail->bindParam(':email', $email);
                 $checkEmail->bindParam(':id', $userId);
                 $checkEmail->execute();
@@ -288,7 +288,7 @@ class UserRepository extends EntityRepository {
             }
 
             // Construire et exécuter la requête UPDATE
-            $query = "UPDATE User SET " . implode(", ", $updateFields) . " WHERE id=:id";
+            $query = 'UPDATE "User" SET ' . implode(", ", $updateFields) . " WHERE id=:id";
             $requete = $this->cnx->prepare($query);
             $success = $requete->execute($params);
 
@@ -316,7 +316,7 @@ class UserRepository extends EntityRepository {
         // TODO: Implémenter la requête SQL
         // Exemple :
         
-        $requete = $this->cnx->prepare("SELECT * FROM User");
+        $requete = $this->cnx->prepare('SELECT * FROM "User"');
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
 
@@ -367,7 +367,7 @@ class UserRepository extends EntityRepository {
     public function save($entity): bool {
         try {
             // Vérifier si l'email existe déjà
-            $checkEmail = $this->cnx->prepare("SELECT id FROM User WHERE email = :email");
+            $checkEmail = $this->cnx->prepare('SELECT id FROM "User" WHERE email = :email');
             $email = $entity->getEmail();
             $checkEmail->bindParam(':email', $email);
             $checkEmail->execute();
@@ -380,7 +380,7 @@ class UserRepository extends EntityRepository {
             $hashedPassword = password_hash($entity->getPassword(), PASSWORD_BCRYPT, ['cost' => 12]);
             
             $requete = $this->cnx->prepare(
-                "INSERT INTO User (name, surname, email, password) VALUES (:name, :surname, :email, :password)"
+                'INSERT INTO "User" (name, surname, email, password) VALUES (:name, :surname, :email, :password) RETURNING id'
             );
             
             $name = $entity->getName();
@@ -391,15 +391,9 @@ class UserRepository extends EntityRepository {
             $requete->bindParam(':email', $email);
             $requete->bindParam(':password', $hashedPassword);
             
-            $answer = $requete->execute();
-
-            if ($answer) {
-                $id = $this->cnx->lastInsertId();
-                $entity->setId((int)$id);
-                return true;
-            }
-            
-            return false;
+            $requete->execute();
+            $entity->setId((int) $requete->fetchColumn());
+            return true;
             
         } catch (Exception $e) {
             error_log("Erreur lors de l'enregistrement de l'utilisateur : " . $e->getMessage());
@@ -440,7 +434,7 @@ class UserRepository extends EntityRepository {
             $password = $entity->getPassword();
 
             // Vérifier si l'email existe déjà pour un autre utilisateur
-            $checkEmail = $this->cnx->prepare("SELECT id FROM User WHERE email = :email AND id != :id");
+            $checkEmail = $this->cnx->prepare('SELECT id FROM "User" WHERE email = :email AND id != :id');
             $checkEmail->bindParam(':email', $email);
             $checkEmail->bindParam(':id', $id);
             $checkEmail->execute();
@@ -461,7 +455,7 @@ class UserRepository extends EntityRepository {
             }
 
             // Construire et exécuter la requête UPDATE
-            $query = "UPDATE User SET " . implode(", ", $updateFields) . " WHERE id=:id";
+            $query = 'UPDATE "User" SET ' . implode(", ", $updateFields) . " WHERE id=:id";
             $requete = $this->cnx->prepare($query);
             
             return $requete->execute($params);

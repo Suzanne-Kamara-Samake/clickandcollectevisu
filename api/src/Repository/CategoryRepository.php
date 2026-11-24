@@ -30,7 +30,7 @@ class CategoryRepository extends EntityRepository {
             permet de vérifier que la valeur transmise est "safe" et de se prémunir
             d'injection SQL.
         */
-        $requete = $this->cnx->prepare("select * from Category where id=:value"); // prepare la requête SQL
+        $requete = $this->cnx->prepare('SELECT * FROM "Category" WHERE id=:value'); // prepare la requête SQL
         $requete->bindParam(':value', $id); // fait le lien entre le "tag" :value et la valeur de $id
         $requete->execute(); // execute la requête
         $answer = $requete->fetch(PDO::FETCH_OBJ);
@@ -44,7 +44,7 @@ class CategoryRepository extends EntityRepository {
     }
 
     public function findAll(): array {
-        $requete = $this->cnx->prepare("select * from Category");
+        $requete = $this->cnx->prepare('SELECT * FROM "Category"');
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
 
@@ -61,21 +61,13 @@ class CategoryRepository extends EntityRepository {
 
 
     public function save($category){
-        $requete = $this->cnx->prepare("insert into Category (name, category) values (:name, :idcategory)");
+        $requete = $this->cnx->prepare('INSERT INTO "Category" (name) VALUES (:name) RETURNING id');
         $name = $category->getName();
        
         $requete->bindParam(':name', $name );
-        
-        
-        $answer = $requete->execute(); // an insert query returns true or false. $answer is a boolean.
-
-        if ($answer){
-            $id = $this->cnx->lastInsertId(); // retrieve the id of the last insert query
-            $category->setId($id); // set the category id to its real value.
-            return true;
-        }
-          
-        return false;
+        $requete->execute();
+        $category->setId((int) $requete->fetchColumn());
+        return true;
     }
 
     public function delete($id){

@@ -24,7 +24,7 @@ class ProductGalleryRepository extends EntityRepository {
         // TODO: Implémenter la requête SQL
         // Exemple :
         
-        $requete = $this->cnx->prepare("SELECT * FROM ProductGallery WHERE id=:value");
+        $requete = $this->cnx->prepare('SELECT * FROM "ProductGallery" WHERE id=:value');
         $requete->bindParam(':value', $id);
         $requete->execute();
         $answer = $requete->fetch(PDO::FETCH_OBJ);
@@ -50,7 +50,7 @@ class ProductGalleryRepository extends EntityRepository {
         // TODO: Implémenter la requête SQL
         // Exemple :
         
-        $requete = $this->cnx->prepare("SELECT * FROM ProductGallery WHERE idProd=:value");
+        $requete = $this->cnx->prepare('SELECT * FROM "ProductGallery" WHERE "idProd"=:value');
         $requete->bindParam(':value', $idProd); 
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
@@ -83,7 +83,7 @@ class ProductGalleryRepository extends EntityRepository {
         // TODO: Implémenter la requête SQL
         // Exemple :
         
-        $requete = $this->cnx->prepare("SELECT * FROM ProductGallery");
+        $requete = $this->cnx->prepare('SELECT * FROM "ProductGallery"');
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
 
@@ -104,7 +104,7 @@ class ProductGalleryRepository extends EntityRepository {
         return []; // À remplacer par votre implémentation
     }
     public function findPath($path): array {
-        $requete = $this->cnx->prepare("SELECT * FROM ProductGallery WHERE path=:value");
+        $requete = $this->cnx->prepare('SELECT * FROM "ProductGallery" WHERE path=:value');
         $requete->bindParam(':value', $path);
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
@@ -132,21 +132,15 @@ class ProductGalleryRepository extends EntityRepository {
         // Exemple :
         
         $requete = $this->cnx->prepare(
-            "INSERT INTO ProductGallery (path, image) VALUES (:path, :image)"
+            'INSERT INTO "ProductGallery" (path, image) VALUES (:path, :image) RETURNING id'
         );
         $path = $entity->getPath();
         $image = $entity->getImage();
         $requete->bindParam(':path', $path);
         $requete->bindParam(':image', $image);
-        $answer = $requete->execute();
-
-        if ($answer) {
-            $id = $this->cnx->lastInsertId();
-            $entity->setId((int)$id);
-            return true;
-        }
-        
-        return false;
+        $requete->execute();
+        $entity->setId((int) $requete->fetchColumn());
+        return true;
         
         
         return false; // À remplacer par votre implémentation
@@ -162,7 +156,7 @@ class ProductGalleryRepository extends EntityRepository {
         // TODO: Implémenter la requête DELETE
         // Exemple :
         
-        $requete = $this->cnx->prepare("DELETE FROM ProductGallery WHERE id=:value");
+        $requete = $this->cnx->prepare('DELETE FROM "ProductGallery" WHERE id=:value');
         $requete->bindParam(':value', $id);
         return $requete->execute();
         
@@ -181,13 +175,11 @@ class ProductGalleryRepository extends EntityRepository {
         // Exemple :
         
         $requete = $this->cnx->prepare(
-            "UPDATE ProductGallery SET name=:name, image=:image WHERE id=:id"
+            'UPDATE "ProductGallery" SET image=:image WHERE id=:id'
         );
         $id = $entity->getId();
-        $name = $entity->getName();
         $image = $entity->getImage();
         $requete->bindParam(':id', $id);
-        $requete->bindParam(':name', $name);
         $requete->bindParam(':image', $image);
         return $requete->execute();
         

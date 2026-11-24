@@ -26,7 +26,7 @@ class OrderRepository extends EntityRepository {
         // TODO: Implémenter la requête SQL
         // Exemple :
        
-        $requete = $this->cnx->prepare("SELECT * FROM `Order` WHERE id=:value");
+        $requete = $this->cnx->prepare('SELECT * FROM "Order" WHERE id=:value');
         $requete->bindParam(':value', $id);
         $requete->execute();
         $answer = $requete->fetch(PDO::FETCH_OBJ);
@@ -44,7 +44,7 @@ class OrderRepository extends EntityRepository {
     }
 
     public function findAllByUser($idUser): array {
-        $requete = $this->cnx->prepare("SELECT * FROM `Order` WHERE idUser=:idUser");
+        $requete = $this->cnx->prepare('SELECT * FROM "Order" WHERE "idUser"=:idUser');
         $requete->bindParam(':idUser', $idUser);
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
@@ -69,7 +69,7 @@ class OrderRepository extends EntityRepository {
         // TODO: Implémenter la requête SQL
         // Exemple :
        
-        $requete = $this->cnx->prepare("SELECT * FROM `Order`");
+        $requete = $this->cnx->prepare('SELECT * FROM "Order"');
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
 
@@ -88,7 +88,7 @@ class OrderRepository extends EntityRepository {
     }
 
     public function fetchOrderItems($orderId): array {
-        $requete = $this->cnx->prepare("SELECT * FROM `OrderItem` WHERE orderId=:orderId");
+        $requete = $this->cnx->prepare('SELECT * FROM "OrderItem" WHERE "idOrder"=:orderId');
         $requete->bindParam(':orderId', $orderId);
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
@@ -116,21 +116,15 @@ class OrderRepository extends EntityRepository {
         // Exemple :
         
         $requete = $this->cnx->prepare(
-            "INSERT INTO `Order` (idUser, date) VALUES (:idUser, :date)"
+            'INSERT INTO "Order" ("idUser", date) VALUES (:idUser, :date) RETURNING id'
         );
         $idUser = $entity->getidUser();
         $date = $entity->getdate();
         $requete->bindParam(':idUser', $idUser);
         $requete->bindParam(':date', $date);
-        $answer = $requete->execute();
-
-        if ($answer) {
-            $id = $this->cnx->lastInsertId();
-            $entity->setId((int)$id);
-            return true;
-        }
-        
-        return false;
+        $requete->execute();
+        $entity->setId((int) $requete->fetchColumn());
+        return true;
         
         
         return false; // À remplacer par votre implémentation
@@ -146,7 +140,7 @@ class OrderRepository extends EntityRepository {
         // TODO: Implémenter la requête DELETE
         // Exemple :
         /*
-        $requete = $this->cnx->prepare("DELETE FROM `Order` WHERE id=:value");
+        $requete = $this->cnx->prepare('DELETE FROM "Order" WHERE id=:value');
         $requete->bindParam(':value', $id);
         return $requete->execute();
         */
@@ -165,7 +159,7 @@ class OrderRepository extends EntityRepository {
         // Exemple :
         /*
         $requete = $this->cnx->prepare(
-            "UPDATE `Order` SET idUser=:idUser, date=:date WHERE id=:id"
+            'UPDATE "Order" SET "idUser"=:idUser, date=:date WHERE id=:id'
         );
         $id = $entity->getId();
         $idUser = $entity->getidUser();

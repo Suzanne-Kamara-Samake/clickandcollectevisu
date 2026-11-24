@@ -24,7 +24,7 @@ class OrderItemRepository extends EntityRepository {
         // TODO: Implémenter la requête SQL
         // Exemple :
         
-        $requete = $this->cnx->prepare("SELECT * FROM OrderItem WHERE id=:value");
+        $requete = $this->cnx->prepare('SELECT * FROM "OrderItem" WHERE id=:value');
         $requete->bindParam(':value', $id);
         $requete->execute();
         $answer = $requete->fetch(PDO::FETCH_OBJ);
@@ -48,7 +48,7 @@ class OrderItemRepository extends EntityRepository {
         // TODO: Implémenter la requête SQL
         // Exemple :
         
-        $requete = $this->cnx->prepare("SELECT * FROM OrderItem");
+        $requete = $this->cnx->prepare('SELECT * FROM "OrderItem"');
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
 
@@ -75,7 +75,7 @@ class OrderItemRepository extends EntityRepository {
         // Exemple :
         
         $requete = $this->cnx->prepare(
-            "INSERT INTO OrderItem (idOrder, idProduct, quantity) VALUES (:idOrder, :idProduct, :quantity)"
+            'INSERT INTO "OrderItem" ("idOrder", "idProduct", quantity) VALUES (:idOrder, :idProduct, :quantity) RETURNING id'
         );
         $idOrder = $entity->getIdOrder();
         $idProduct = $entity->getIdProduct();
@@ -83,22 +83,16 @@ class OrderItemRepository extends EntityRepository {
         $requete->bindParam(':idOrder', $idOrder);
         $requete->bindParam(':idProduct', $idProduct);
         $requete->bindParam(':quantity', $quantity);
-        $answer = $requete->execute();
-
-        if ($answer) {
-            $id = $this->cnx->lastInsertId();
-            $entity->setId((int)$id);
-            return true;
-        }
-        
-        return false;
+        $requete->execute();
+        $entity->setId((int) $requete->fetchColumn());
+        return true;
         
         
         return false; // À remplacer par votre implémentation
     }
 
     public function findAllByOrder($orderId): array {
-        $requete = $this->cnx->prepare("SELECT * FROM OrderItem WHERE idOrder=:orderId");
+        $requete = $this->cnx->prepare('SELECT * FROM "OrderItem" WHERE "idOrder"=:orderId');
         $requete->bindParam(':orderId', $orderId);
         $requete->execute();
         $answer = $requete->fetchAll(PDO::FETCH_OBJ);
