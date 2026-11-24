@@ -6,5 +6,10 @@ export default defineConfig({
     target: "esnext", //browsers can handle the latest ES features
   },
   plugins: [tailwindcss()],
+  server: {
+    proxy: {
+      "/api": "http://localhost:8000"
+    }
+  },
   base: "/",
 });

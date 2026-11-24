@@ -1,2 +1,17 @@
-# Ignorer le dossier node_modules du client
-client/node_modules/
+# Dependances
+node_modules/
+
+# Fichiers d'environnement locaux (les exemples restent versionnes)
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Cles et conteneurs de cles prives
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore

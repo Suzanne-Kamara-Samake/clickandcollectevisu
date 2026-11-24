@@ -71,7 +71,7 @@ ProductGallery.fetchAll = async function(){
 }
 ProductGallery.fetchGall = async function(idProd){
     let data = await getRequest('productgalleries?idProd='+idProd);
-    return data==false ? fakeCategories : data;
+    return Array.isArray(data) ? data : [];
 }
 
 export {ProductGallery};

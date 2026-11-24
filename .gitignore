@@ -1,2 +1,20 @@
 # Ignorer le dossier node_modules du client
 client/node_modules/
+
+# Fichiers d'environnement locaux (les exemples restent versionnes)
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.sample
+!**/.env.template
+
+# Cles et conteneurs de cles prives
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/*.jks
+**/*.keystore
+
+# Dump de base de donnees contenant des donnees privees
+api/kamara4.sql
