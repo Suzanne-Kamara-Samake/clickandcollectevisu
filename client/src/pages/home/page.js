@@ -86,7 +86,7 @@ V.init = function(userData, isAuthenticated, products) {
                 // Utiliser l'image de la BDD avec le bon chemin
                 if (imageEl && product.image) {
                     // Construire le chemin de l'image selon la structure
-                    const imagePath = `../../../public/productsImage/${product.image}.jpg`;
+                    const imagePath = `/productsImage/${product.image}.jpg`;
                     imageEl.src = imagePath;
                     imageEl.alt = product.name || 'Produit';
                 }

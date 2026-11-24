@@ -121,7 +121,7 @@ C.handler_clickOnGallery = function(ev) {
     }
 
     try {
-        mainImage.src = `../../../public/productsImage/${gallItem.path}/${gallItem.image}.webp`;
+        mainImage.src = `/productsImage/${gallItem.path}/${gallItem.image}.webp`;
         console.log("Updated main image src:", mainImage.src);
     } catch (error) {
         console.error("Error updating image:", error);
